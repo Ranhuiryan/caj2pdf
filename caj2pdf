@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os
+import glob, os
 import argparse
 from cajparser import CAJParser
 from utils import add_outlines
@@ -14,6 +14,10 @@ if __name__ == "__main__":
 
     convert_parser = subparsers.add_parser("convert", help="Convert the CAJ file to PDF file.")
     convert_parser.add_argument("input", help="Path to the CAJ file.")
+    convert_parser.add_argument("-o", "--output", help="Output path to the PDF file.", required=False)
+
+    convert_parser = subparsers.add_parser("bconvert", help="Convert  a batch of CAJ files to PDF files.")
+    convert_parser.add_argument("input", help="Path to the CAJ files folder.")
     convert_parser.add_argument("-o", "--output", help="Output path to the PDF file.", required=False)
 
     outlines_parser = subparsers.add_parser("outlines", help="Extract outlines from the CAJ file and add it to PDF file.")
@@ -50,6 +54,29 @@ if __name__ == "__main__":
             else:
                 args.output = args.input + ".pdf"
         caj.convert(args.output)
+        print("Converted: {0}".format(args.input))
+
+    if args.command == "bconvert":
+        caj_files = glob.glob(os.path.join(args.input, "*.caj"))
+        for caj_file in caj_files:
+            try:
+                caj = CAJParser(caj_file)
+                if args.output is None:
+                    if caj_file.endswith(".caj"):
+                        output = caj_file.replace(".caj", ".pdf")
+                    elif (len(caj_file) > 4 and (caj_file[-4] == '.' or caj_file[-3] == '.') and not caj_file.endswith(".pdf")):
+                        output = os.path.splitext(caj_file)[0] + ".pdf"
+                    else:
+                        output = caj_file + ".pdf"
+                else:
+                    if not os.path.exists(args.output):
+                        os.makedirs(args.output)
+                    output = os.path.join(args.output, os.path.basename(caj_file).replace(".caj", ".pdf"))
+                caj.convert(output)
+                print("Converted: {0}".format(caj_file))
+            except Exception as e:
+                print("Error: {0}".format(e))
+                continue
 
     if args.command == "outlines":
         caj = CAJParser(args.input)

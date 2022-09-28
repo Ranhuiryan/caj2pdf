@@ -36,6 +36,8 @@ cc -Wall `pkg-config --cflags jbig2dec` -fPIC -shared -o libjbig2codec.so decode
 
 - Python 3.3+
 - [PyPDF2](https://github.com/mstamy2/PyPDF2)
+<!-- - pillow -->
+<!-- - imagesize -->
 - [mutool](https://mupdf.com/index.html)
 
 除了Microsoft Windows：我们提供Microsoft Windows 32-bit/64-bit DLLs，HN 格式需要
@@ -51,6 +53,9 @@ caj2pdf show [input_file]
 
 # 转换文件
 caj2pdf convert [input_file] -o/--output [output_file]
+
+# 批量转换文件
+caj2pdf bconvert [input_file_folder] -o/--output [output_file_folder]
 
 # 从 CAJ 文件中提取大纲信息并添加至 PDF 文件
 ## 遇到不支持的文件类型或 Bug 时，可用 CAJViewer 打印 PDF 文件，并用这条命令为其添加大纲
