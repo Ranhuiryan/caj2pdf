@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import glob, os
+import glob, os, shutil
 import argparse
 from cajparser import CAJParser
 from utils import add_outlines
@@ -70,10 +70,12 @@ if __name__ == "__main__":
                         output = caj_file + ".pdf"
                 else:
                     if not os.path.exists(args.output):
-                        os.makedirs(args.output)
-                    output = os.path.join(args.output, os.path.basename(caj_file).replace(".caj", ".pdf"))
+                        os.makedirs(os.path.join(args.output, "cajs"))
+                        os.makedirs(os.path.join(args.output, "pdfs"))
+                    output = os.path.join(args.output, "pdfs", os.path.basename(caj_file).replace(".caj", ".pdf"))
                 caj.convert(output)
                 print("Converted: {0}".format(caj_file))
+                shutil.move(caj_file, os.path.join(args.output, "cajs", os.path.basename(caj_file)))
             except Exception as e:
                 print("Error: {0}".format(e))
                 continue
